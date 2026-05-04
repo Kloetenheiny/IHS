@@ -16,11 +16,15 @@ find_package(Vulkan REQUIRED)
 
 add_executable(IHS src/application/main.cpp
         src/renderer/vulkanbackend/VulkanContext.cpp
-        src/renderer/vulkanbackend/VulkanContext.h)
+        src/renderer/vulkanbackend/VulkanContext.h
+        src/renderer/vulkanbackend/VulkanAllocator.cpp
+        src/renderer/vulkanbackend/VulkanAllocator.h)
 
 target_include_directories(IHS PRIVATE
     src/
     thirdparty/
+    thirdparty/glm
+    thirdparty/vma/include
 )
 
 target_link_libraries(IHS PRIVATE
