@@ -1,8 +1,30 @@
-//
-// Created by christian on 09.05.26.
-//
+#pragma once
+#include <vulkan/vulkan.h>
+#include <vector>
 
-#ifndef IHS_VULKANSWAPCHAIN_H
-#define IHS_VULKANSWAPCHAIN_H
+#include "VulkanContext.h"
+#include "windowsystem/IWindow.h"
 
-#endif //IHS_VULKANSWAPCHAIN_H
+class VulkanSwapchain
+{
+private:
+    //objects
+    VkSwapchainKHR m_VulkanSwapchain = VK_NULL_HANDLE;
+    std::vector<VkImage> m_SwapchainImages;
+    std::vector<VkImageView> m_SwapchainImageViews;
+    VkExtent2D m_swapchainExtent{};
+    VulkanContext* cntx;
+    IWindow* window;
+public:
+    //objects
+private:
+    //functions
+    void createSwapchain();
+    VkSurfaceCapabilitiesKHR getSwapchainSurfaceCaps();
+
+public:
+    //functions
+    VulkanSwapchain(VulkanContext* cntx, IWindow* window);
+    ~VulkanSwapchain();
+    VkSwapchainKHR getSwapchainHandle() const {return m_VulkanSwapchain;}
+};

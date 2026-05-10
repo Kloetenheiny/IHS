@@ -1,5 +1,9 @@
 #pragma once
 #include <vulkan/vulkan.h>
+#include <iostream>
+#include <array>
+#include <vector>
+#include <vk_mem_alloc.h>
 
 class VulkanContext
 {
@@ -9,18 +13,26 @@ private:
     VkDevice m_VulkanDevice = VK_NULL_HANDLE;
     VkPhysicalDevice m_VulkanPhysicalDevice = VK_NULL_HANDLE;
     VkQueue m_graphicsQueue = VK_NULL_HANDLE;
+    VmaAllocator m_allocator_instance = VK_NULL_HANDLE;
+    std::array<const char*, 1> validationLayer{"VK_LAYER_KHRONOS_validation"};
+    const std::array<const char*, 1 > deviceExtensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
 public:
     //functions
-    VulkanContext() = default;
+    VulkanContext();
     ~VulkanContext();
     VkInstance getInstanceHandle() const {return m_VulkanInstance;}
     VkDevice getDeviceHandle() const {return m_VulkanDevice;}
     VkPhysicalDevice getPhysicalDeviceHandle() const {return m_VulkanPhysicalDevice;}
-    uint32_t getGraphicsQueueHandle() const {return m_graphicsQueue;}
+    VkQueue getGraphicsQueueHandle() const {return m_graphicsQueue;}
+    uint32_t getGraphicsQueueFamilyIndex();
 
 private:
     //functions
     void createInstance();
+    void createDevice();
+    void createAllocator();
+
 public:
     //objects
 };

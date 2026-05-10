@@ -18,7 +18,15 @@ add_executable(IHS src/application/main.cpp
         src/renderer/vulkanbackend/VulkanContext.cpp
         src/renderer/vulkanbackend/VulkanContext.h
         src/renderer/vulkanbackend/VulkanAllocator.cpp
-        src/renderer/vulkanbackend/VulkanAllocator.h)
+        src/renderer/vulkanbackend/VulkanAllocator.h
+        src/windowsystem/IWindow.cpp
+        src/windowsystem/IWindow.h
+        src/renderer/vulkanbackend/VulkanSwapchain.cpp
+        src/renderer/vulkanbackend/VulkanSwapchain.h
+        src/renderer/vulkanbackend/VulkanRenderer.cpp
+        src/renderer/vulkanbackend/VulkanRenderer.h
+        src/renderer/vulkanbackend/VulkanPipeline.h
+        src/renderer/vulkanbackend/VulkanPipeline.cpp)
 
 target_include_directories(IHS PRIVATE
     src/
