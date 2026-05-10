@@ -27,4 +27,5 @@ public:
     VulkanSwapchain(VulkanContext* cntx, IWindow* window);
     ~VulkanSwapchain();
     VkSwapchainKHR getSwapchainHandle() const {return m_VulkanSwapchain;}
+    const std::vector<VkImage>& getSwapchainImages() const {return m_SwapchainImages;}
 };

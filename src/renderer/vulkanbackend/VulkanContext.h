@@ -4,6 +4,7 @@
 #include <array>
 #include <vector>
 #include <vk_mem_alloc.h>
+#include "GLFW/glfw3.h"
 
 class VulkanContext
 {

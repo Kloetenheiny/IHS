@@ -1,6 +1,6 @@
 #define VMA_IMPLEMENTATION
 #include <renderer/vulkanbackend/VulkanContext.h>
-#include "GLFW/glfw3.h"
+
 
 VulkanContext::VulkanContext()
 {
@@ -34,23 +34,6 @@ void VulkanContext::createInstance()
 
     uint32_t instanceExtCount{};
     char const* const* instExtensions = glfwGetRequiredInstanceExtensions(&instanceExtCount);
-    /*for (auto i = 0; i < instanceExtCount; i++)
-    {
-        std::cout << "GLFW InstExt: " << instExtensions[i] << std::endl;
-    }
-    std::cout << "ExtCount: " << instanceExtCount << std::endl;
-    std::cout << "instExtensions ptr: " << instExtensions << std::endl;
-    if (instanceExtCount == 0 || instExtensions == nullptr)
-        std::cerr << "GLFW returned no extensions — GLFW init fehlgeschlagen?" << std::endl;*/
-
-    /*uint32_t InstExtCount{};
-    vkEnumerateInstanceExtensionProperties(nullptr, &InstExtCount, nullptr);
-    std::vector<VkExtensionProperties> extProp(InstExtCount);
-    vkEnumerateInstanceExtensionProperties(nullptr, &InstExtCount, extProp.data());
-    for (const auto e : extProp)
-    {
-        std::cout << "Ext Name: " << e.extensionName << std::endl;
-    }*/
 
 
     VkInstanceCreateInfo instCI
@@ -227,19 +210,15 @@ bool VulkanContext::CheckValidationLayerSupport()
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
     std::vector<VkLayerProperties> availableLayers(layerCount);
-    vkEnumerateInstanceLayerProperties(
-        &layerCount,
-        availableLayers.data()
-    );
+    vkEnumerateInstanceLayerProperties(&layerCount,availableLayers.data());
 
-    for (const char* layerName : m_validationLayer)
+    for (const auto* layerName : m_validationLayer)
     {
         bool layerFound = false;
 
         for (const auto& layerProperties : availableLayers)
         {
-            if (strcmp(layerName,
-                       layerProperties.layerName) == 0)
+            if (strcmp(layerName, layerProperties.layerName) == 0)
             {
                 layerFound = true;
                 break;
