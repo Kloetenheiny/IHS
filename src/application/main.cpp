@@ -1,6 +1,7 @@
 #include <renderer/vulkanbackend/VulkanContext.h>
 #include <windowsystem/IWindow.h>
 #include <renderer/vulkanbackend/VulkanSwapchain.h>
+#include <renderer/vulkanbackend/VulkanAllocator.h>
 
 
 int main()
@@ -10,6 +11,7 @@ int main()
     VulkanContext Context{};
     IWindow window{&Context};
     VulkanSwapchain Swapchain{&Context, &window};
+    VulkanAllocator Allocator{&Context};
 
     while (!glfwWindowShouldClose(window.getWindowHandle()))
     {

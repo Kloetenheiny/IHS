@@ -57,8 +57,8 @@ void VulkanContext::createInstance()
     {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pApplicationInfo = &appInfo,
-        .enabledLayerCount = static_cast<uint32_t>(validationLayer.size()),
-        .ppEnabledLayerNames = validationLayer.data(),
+        .enabledLayerCount = static_cast<uint32_t>(m_validationLayer.size()),
+        .ppEnabledLayerNames = m_validationLayer.data(),
         .enabledExtensionCount = instanceExtCount,
         .ppEnabledExtensionNames = instExtensions,
 
@@ -123,11 +123,11 @@ void VulkanContext::createDevice()
     }
 
     const float qfPriorities{1.0f};
-    uint32_t graphicsQueueIndex = getGraphicsQueueFamilyIndex();
+    m_graphicsQueueFamilyIndex = getGraphicsQueueFamilyIndex();
     VkDeviceQueueCreateInfo queueCI
     {
         .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-        .queueFamilyIndex = graphicsQueueIndex,
+        .queueFamilyIndex = m_graphicsQueueFamilyIndex,
         .queueCount = 1,
         .pQueuePriorities = &qfPriorities
     };
@@ -155,8 +155,8 @@ void VulkanContext::createDevice()
         .pNext = &enabledVk13Features,
         .queueCreateInfoCount = 1,
         .pQueueCreateInfos = &queueCI,
-        .enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size()),
-        .ppEnabledExtensionNames = deviceExtensions.data(),
+        .enabledExtensionCount = static_cast<uint32_t>(m_deviceExtensions.size()),
+        .ppEnabledExtensionNames = m_deviceExtensions.data(),
         .pEnabledFeatures = &enabledVk10Features,
     };
 
@@ -168,12 +168,12 @@ void VulkanContext::createDevice()
 
 
     //get handle to graphics queue
-    vkGetDeviceQueue(m_VulkanDevice, graphicsQueueIndex, 0, &m_graphicsQueue);
+    vkGetDeviceQueue(m_VulkanDevice, m_graphicsQueueFamilyIndex, 0, &m_graphicsQueue);
 
 
 }
 
-uint32_t VulkanContext::getGraphicsQueueFamilyIndex()
+uint32_t VulkanContext::findGraphicsQueueFamilyIndex()
 {
     uint32_t queueCount{};
     vkGetPhysicalDeviceQueueFamilyProperties(m_VulkanPhysicalDevice, &queueCount, nullptr);
@@ -232,7 +232,7 @@ bool VulkanContext::CheckValidationLayerSupport()
         availableLayers.data()
     );
 
-    for (const char* layerName : validationLayer)
+    for (const char* layerName : m_validationLayer)
     {
         bool layerFound = false;
 
