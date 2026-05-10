@@ -32,6 +32,7 @@ private:
     void createInstance();
     void createDevice();
     void createAllocator();
+    bool CheckValidationLayerSupport();
 
 public:
     //objects

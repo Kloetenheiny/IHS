@@ -7,6 +7,7 @@ VulkanContext::VulkanContext()
     createInstance();
     createDevice();
     createAllocator();
+    CheckValidationLayerSupport();
 }
 
 VulkanContext::~VulkanContext()
@@ -42,11 +43,11 @@ void VulkanContext::createInstance()
     if (instanceExtCount == 0 || instExtensions == nullptr)
         std::cerr << "GLFW returned no extensions — GLFW init fehlgeschlagen?" << std::endl;*/
 
-    uint32_t InstExtCount{};
+    /*uint32_t InstExtCount{};
     vkEnumerateInstanceExtensionProperties(nullptr, &InstExtCount, nullptr);
     std::vector<VkExtensionProperties> extProp(InstExtCount);
     vkEnumerateInstanceExtensionProperties(nullptr, &InstExtCount, extProp.data());
-    /*for (const auto e : extProp)
+    for (const auto e : extProp)
     {
         std::cout << "Ext Name: " << e.extensionName << std::endl;
     }*/
@@ -56,8 +57,8 @@ void VulkanContext::createInstance()
     {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pApplicationInfo = &appInfo,
-        .enabledLayerCount = 0,
-        .ppEnabledLayerNames = nullptr,
+        .enabledLayerCount = static_cast<uint32_t>(validationLayer.size()),
+        .ppEnabledLayerNames = validationLayer.data(),
         .enabledExtensionCount = instanceExtCount,
         .ppEnabledExtensionNames = instExtensions,
 
@@ -218,4 +219,38 @@ void VulkanContext::createAllocator()
     {
         throw std::runtime_error("Failed to create Memory Allocator");
     }
+}
+
+bool VulkanContext::CheckValidationLayerSupport()
+{
+    uint32_t layerCount;
+    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+    std::vector<VkLayerProperties> availableLayers(layerCount);
+    vkEnumerateInstanceLayerProperties(
+        &layerCount,
+        availableLayers.data()
+    );
+
+    for (const char* layerName : validationLayer)
+    {
+        bool layerFound = false;
+
+        for (const auto& layerProperties : availableLayers)
+        {
+            if (strcmp(layerName,
+                       layerProperties.layerName) == 0)
+            {
+                layerFound = true;
+                break;
+            }
+        }
+
+        if (!layerFound)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
