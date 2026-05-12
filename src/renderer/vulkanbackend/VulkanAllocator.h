@@ -13,16 +13,20 @@ class VulkanAllocator
 private:
     //objects
     VkCommandPool m_cmdPool = VK_NULL_HANDLE;
-    std::array<VkCommandBuffer, s_MAX_FRAMES_IN_FLIGHT> m_cmdBuffers;
-    std::array<VkSemaphore, s_MAX_FRAMES_IN_FLIGHT> m_presentSemaphores;
-    std::array<VkFence, s_MAX_FRAMES_IN_FLIGHT> m_fences;
-    std::vector<VkSemaphore> m_renderSemaphores;
+
+
+
+
 
     VulkanSwapchain* swapchain;
     VulkanContext* ctx;
 
 public:
     //objects
+    std::array<VkFence, s_MAX_FRAMES_IN_FLIGHT> m_fences;
+    std::array<VkSemaphore, s_MAX_FRAMES_IN_FLIGHT> m_presentSemaphores;
+    std::array<VkCommandBuffer, s_MAX_FRAMES_IN_FLIGHT> m_cmdBuffers;
+    std::vector<VkSemaphore> m_renderSemaphores;
 private:
     //functions
     void createCommandPool();

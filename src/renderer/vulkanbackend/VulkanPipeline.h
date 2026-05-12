@@ -27,9 +27,9 @@ public:
     // Einfaches Dreieck
     const std::vector<Vertex> vertices =
     {
-        {{ 0.0f, -0.5f }, {1.0f, 0.0f, 0.0f}}, // unten Mitte - Rot
-        {{ 0.5f,  0.5f }, {0.0f, 1.0f, 0.0f}}, // rechts oben - Grün
-        {{-0.5f,  0.5f }, {0.0f, 0.0f, 1.0f}}  // links oben - Blau
+        {{ 0.0f, -0.5f }, {1.0f, 0.0f, 0.0f}},  // Spitze oben - Rot
+        {{ 0.5f,  0.5f }, {0.0f, 1.0f, 0.0f}},  // rechts unten - Grün
+        {{-0.5f,  0.5f }, {0.0f, 0.0f, 1.0f}}   // links unten - Blau
     };
 private:
     //functions
@@ -38,4 +38,6 @@ public:
     //functions
     VulkanGraphicsPipeline(VulkanContext* ctx, VulkanAllocator* vlknAlloc);
     ~VulkanGraphicsPipeline();
+    VkPipeline getGraphicsPipelineHandle() const {return m_VulkanGraphicsPipeline;}
+    VkPipelineLayout getGraphicsPipelineLayoutHandle() const {return m_VulkanGraphicsPipelinelayout;}
 };

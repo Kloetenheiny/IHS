@@ -24,7 +24,7 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
     VkPushConstantRange pushConstantRange
     {
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-        .size = sizeof(VkDeviceAddress)
+        .size = 76
     };
 
     VkPipelineLayoutCreateInfo pipelineLayoutCI
@@ -47,7 +47,7 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
         .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
     };
 
-    std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+    /*std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
 
     // Position
     attributeDescriptions[0].binding = 0;
@@ -59,15 +59,15 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
     attributeDescriptions[1].binding = 0;
     attributeDescriptions[1].location = 1;
     attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-    attributeDescriptions[1].offset = offsetof(Vertex, color);
+    attributeDescriptions[1].offset = offsetof(Vertex, color);*/
 
     VkPipelineVertexInputStateCreateInfo vertexInputState
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        .vertexBindingDescriptionCount = 1,
-        .pVertexBindingDescriptions = &bindingDescription,
-        .vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size()),
-        .pVertexAttributeDescriptions = attributeDescriptions.data(),
+        .vertexBindingDescriptionCount = 0,
+        .pVertexBindingDescriptions = nullptr,
+        .vertexAttributeDescriptionCount = 0,
+        .pVertexAttributeDescriptions = nullptr,
 
     };
 
