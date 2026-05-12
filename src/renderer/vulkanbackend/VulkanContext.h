@@ -18,7 +18,7 @@ private:
     std::array<const char*, 1> m_validationLayer{"VK_LAYER_KHRONOS_validation"};
     const std::array<const char*, 1 > m_deviceExtensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
     uint32_t m_graphicsQueueFamilyIndex{};
-
+    //test
 public:
     //functions
     VulkanContext();

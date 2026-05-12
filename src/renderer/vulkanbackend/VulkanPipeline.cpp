@@ -96,7 +96,7 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
 
     VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderInfo, fragShaderInfo };
 
-
+    //eventuell fehlerhaft weil scissor fehlt
     VkPipelineViewportStateCreateInfo viewportState
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
@@ -123,7 +123,7 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
 
     VkPipelineColorBlendAttachmentState blendAttachment
     {
-        .colorWriteMask = 0xF
+        .colorWriteMask = 0xF //??????
     };
 
     VkPipelineColorBlendStateCreateInfo colorBlendState
