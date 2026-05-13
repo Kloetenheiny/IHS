@@ -158,7 +158,6 @@ int main()
         vkQueuePresentKHR(Context.getGraphicsQueueHandle(), &presentInfo);
 
 
-
         vkDeviceWaitIdle(Context.getDeviceHandle());
 
         glfwPollEvents();

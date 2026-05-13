@@ -24,7 +24,7 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
     VkPushConstantRange pushConstantRange
     {
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-        .size = 76
+        .size = sizeof(PushConstants)
     };
 
     VkPipelineLayoutCreateInfo pipelineLayoutCI

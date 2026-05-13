@@ -31,6 +31,12 @@ public:
         {{ 0.5f,  0.5f }, {0.0f, 1.0f, 0.0f}},  // rechts unten - Grün
         {{-0.5f,  0.5f }, {0.0f, 0.0f, 1.0f}}   // links unten - Blau
     };
+
+    struct PushConstants
+    {
+        glm::vec2 pos[3];   // 3 × 8 Bytes  = 24 Bytes  (+ 8 Padding = 32)
+        glm::vec3 color[3]; // 3 × 16 Bytes = 48 Bytes
+    };                      // gesamt:        80 Bytes
 private:
     //functions
     void createGraphicsPipeline();
