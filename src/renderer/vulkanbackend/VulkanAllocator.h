@@ -5,6 +5,7 @@
 #include <array>
 #include <vector>
 #include <fstream>
+#include <cstring>
 
 static constexpr int s_MAX_FRAMES_IN_FLIGHT{2};
 
@@ -15,6 +16,7 @@ private:
     VkCommandPool m_cmdPool = VK_NULL_HANDLE;
     VulkanSwapchain* swapchain;
     VulkanContext* ctx;
+    VmaAllocation vBufferAlloc = VK_NULL_HANDLE;
 
 public:
     //objects
@@ -35,5 +37,6 @@ public:
     ~VulkanAllocator();
     std::vector<char> readFile(const std::string& filename);
     VkShaderModule createShaderModule(const std::vector<char>& code);
-    void allocateBuffer();
+    void allocateBuffer(VkBuffer& Buffer);
+    void freeBufferMemory(VkBuffer& Buffer);
 };

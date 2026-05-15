@@ -17,7 +17,9 @@ int main()
     VulkanGraphicsPipeline GraphicsPipeline{&Context, &Allocator};
     uint32_t frameIndex{0};
     uint32_t imageIndex{0};
+    VkBuffer vBuffer = VK_NULL_HANDLE;
 
+    Allocator.allocateBuffer(vBuffer);
 
     while (!glfwWindowShouldClose(window.getWindowHandle()))
     {
@@ -99,7 +101,9 @@ int main()
 
 
 
-        vkCmdPushConstants(cb, GraphicsPipeline.getGraphicsPipelineLayoutHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(VulkanContext::Vertex) * 3, Context.vertices.data());
+        //vkCmdPushConstants(cb, GraphicsPipeline.getGraphicsPipelineLayoutHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(VulkanContext::Vertex) * 3, Context.vertices.data());
+        VkDeviceSize vOffset{};
+        vkCmdBindVertexBuffers(cb, 0, 1, &vBuffer, &vOffset);
 
         vkCmdDraw(cb, 3, 1, 0, 0);
 
@@ -161,6 +165,8 @@ int main()
 
         glfwPollEvents();
     }
+
+    Allocator.freeBufferMemory(vBuffer);
 
 
     return 0;

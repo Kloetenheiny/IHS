@@ -29,6 +29,7 @@ public:
     VkPhysicalDevice getPhysicalDeviceHandle() const {return m_VulkanPhysicalDevice;}
     VkQueue getGraphicsQueueHandle() const {return m_graphicsQueue;}
     uint32_t getGraphicsQueueFamilyIndex() const {return m_graphicsQueueFamilyIndex;}
+    VmaAllocator getAllocatorHandle() const {return m_allocator_instance;}
 
     //objects
     // Position + Farbe pro Vertex

@@ -40,34 +40,34 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
         throw std::runtime_error("Failed to create pipelinelayout");
     }
 
-    /*VkVertexInputBindingDescription bindingDescription
+    VkVertexInputBindingDescription bindingDescription
     {
         .binding = 0,
         .stride = sizeof(VulkanContext::Vertex),
         .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
-    };*/
+    };
 
-    /*std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+    std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
 
     // Position
     attributeDescriptions[0].binding = 0;
     attributeDescriptions[0].location = 0;
     attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
-    attributeDescriptions[0].offset = offsetof(Vertex, pos);
+    attributeDescriptions[0].offset = offsetof(VulkanContext::Vertex, pos);
 
     // Farbe
     attributeDescriptions[1].binding = 0;
     attributeDescriptions[1].location = 1;
     attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-    attributeDescriptions[1].offset = offsetof(Vertex, color);*/
+    attributeDescriptions[1].offset = offsetof(VulkanContext::Vertex, color);
 
     VkPipelineVertexInputStateCreateInfo vertexInputState
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        .vertexBindingDescriptionCount = 0,
-        .pVertexBindingDescriptions = nullptr,
-        .vertexAttributeDescriptionCount = 0,
-        .pVertexAttributeDescriptions = nullptr,
+        .vertexBindingDescriptionCount = 1,
+        .pVertexBindingDescriptions = &bindingDescription,
+        .vertexAttributeDescriptionCount = 2,
+        .pVertexAttributeDescriptions = attributeDescriptions.data(),
 
     };
 
