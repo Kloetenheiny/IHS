@@ -24,7 +24,7 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
     VkPushConstantRange pushConstantRange
     {
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-        .size = sizeof(PushConstants)
+        .size = sizeof(VulkanContext::PushConstants)
     };
 
     VkPipelineLayoutCreateInfo pipelineLayoutCI
@@ -40,12 +40,12 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
         throw std::runtime_error("Failed to create pipelinelayout");
     }
 
-    VkVertexInputBindingDescription bindingDescription
+    /*VkVertexInputBindingDescription bindingDescription
     {
         .binding = 0,
-        .stride = sizeof(Vertex),
+        .stride = sizeof(VulkanContext::Vertex),
         .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
-    };
+    };*/
 
     /*std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
 

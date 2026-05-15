@@ -76,6 +76,7 @@ void VulkanContext::createDevice()
 
             std::cout << "Selected discrete GPU: "
                       << props.deviceName << std::endl;
+            std::cout << "Max push constant size: " << props.limits.maxPushConstantsSize << std::endl;
 
             break;
         }
@@ -142,6 +143,7 @@ void VulkanContext::createDevice()
         .ppEnabledExtensionNames = m_deviceExtensions.data(),
         .pEnabledFeatures = &enabledVk10Features,
     };
+
 
     if (vkCreateDevice(m_VulkanPhysicalDevice, &deviceCI, nullptr, &m_VulkanDevice) != VK_SUCCESS)
     {

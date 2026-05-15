@@ -52,7 +52,6 @@ int main()
                 .image = Swapchain.getSwapchainImages()[imageIndex],
                 .subresourceRange{.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .levelCount = 1, .layerCount = 1 }
             },
-
         };
         VkDependencyInfo barrierDependencyInfo
         {
@@ -100,7 +99,7 @@ int main()
 
 
 
-        vkCmdPushConstants(cb, GraphicsPipeline.getGraphicsPipelineLayoutHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(VulkanGraphicsPipeline::Vertex) * 3, GraphicsPipeline.vertices.data());
+        vkCmdPushConstants(cb, GraphicsPipeline.getGraphicsPipelineLayoutHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(VulkanContext::Vertex) * 3, Context.vertices.data());
 
         vkCmdDraw(cb, 3, 1, 0, 0);
 

@@ -135,3 +135,8 @@ VkShaderModule VulkanAllocator::createShaderModule(const std::vector<char>& code
     return shaderModule;
 
 }
+
+void VulkanAllocator::allocateBuffer()
+{
+    VkDeviceSize vBuffSize{sizeof(VulkanContext::Vertex) * ctx->vertices.size()};
+}

@@ -13,11 +13,6 @@ class VulkanAllocator
 private:
     //objects
     VkCommandPool m_cmdPool = VK_NULL_HANDLE;
-
-
-
-
-
     VulkanSwapchain* swapchain;
     VulkanContext* ctx;
 
@@ -33,10 +28,12 @@ private:
     void allocateCommandBuffer();
     void createSyncObjects();
 
+
 public:
     //functions
     VulkanAllocator(VulkanContext* ctx, VulkanSwapchain* swapchain);
     ~VulkanAllocator();
     std::vector<char> readFile(const std::string& filename);
     VkShaderModule createShaderModule(const std::vector<char>& code);
+    void allocateBuffer();
 };
