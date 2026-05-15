@@ -150,11 +150,8 @@ void VulkanContext::createDevice()
         throw std::runtime_error("Failed to create Device");
     }
 
-
-
     //get handle to graphics queue
     vkGetDeviceQueue(m_VulkanDevice, m_graphicsQueueFamilyIndex, 0, &m_graphicsQueue);
-
 
 }
 

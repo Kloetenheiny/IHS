@@ -37,6 +37,6 @@ public:
     ~VulkanAllocator();
     std::vector<char> readFile(const std::string& filename);
     VkShaderModule createShaderModule(const std::vector<char>& code);
-    void allocateBuffer(VkBuffer& Buffer);
-    void freeBufferMemory(VkBuffer& Buffer);
+    void allocateBuffer(VkBuffer& Buffer, VmaAllocation& vmaAlloc);
+    void freeBufferMemory(VkBuffer& Buffer, VmaAllocation& vmaAlloc);
 };

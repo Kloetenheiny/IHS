@@ -123,7 +123,7 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
 
     VkPipelineColorBlendAttachmentState blendAttachment
     {
-        .colorWriteMask = 0xF //??????
+        .colorWriteMask = 0xF // = 1111 = alle 4 farbkanäle werden beschrieben
     };
 
     VkPipelineColorBlendStateCreateInfo colorBlendState

@@ -9,7 +9,7 @@ class VulkanSwapchain
 {
 private:
     //objects
-
+    VkSwapchainKHR m_VulkanSwapchain = VK_NULL_HANDLE;
     std::vector<VkImage> m_SwapchainImages;
     std::vector<VkImageView> m_SwapchainImageViews;
     VulkanContext* cntx;
@@ -17,7 +17,6 @@ private:
 public:
     //objects
     VkExtent2D m_swapchainExtent{};
-    VkSwapchainKHR m_VulkanSwapchain = VK_NULL_HANDLE;
 private:
     //functions
     void createSwapchain();

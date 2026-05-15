@@ -136,7 +136,7 @@ VkShaderModule VulkanAllocator::createShaderModule(const std::vector<char>& code
 
 }
 
-void VulkanAllocator::allocateBuffer(VkBuffer& Buffer)
+void VulkanAllocator::allocateBuffer(VkBuffer& Buffer, VmaAllocation& vmaAlloc)
 {
     VkDeviceSize vBuffSize{sizeof(VulkanContext::Vertex) * ctx->vertices.size()};
     VkBufferCreateInfo bufferCI
@@ -155,7 +155,7 @@ void VulkanAllocator::allocateBuffer(VkBuffer& Buffer)
 
     };
 
-    if (vmaCreateBuffer(ctx->getAllocatorHandle(), &bufferCI, &vmaAllocCI, &Buffer, &vBufferAlloc, &vBufferAllocInfo) != VK_SUCCESS)
+    if (vmaCreateBuffer(ctx->getAllocatorHandle(), &bufferCI, &vmaAllocCI, &Buffer, &vmaAlloc, &vBufferAllocInfo) != VK_SUCCESS)
     {
         throw std::runtime_error("Failed to alloc vBuffer");
     }
@@ -163,7 +163,7 @@ void VulkanAllocator::allocateBuffer(VkBuffer& Buffer)
     memcpy(vBufferAllocInfo.pMappedData, ctx->vertices.data(), vBuffSize);
 }
 
-void VulkanAllocator::freeBufferMemory(VkBuffer& Buffer)
+void VulkanAllocator::freeBufferMemory(VkBuffer& Buffer, VmaAllocation& vmaAlloc)
 {
-    vmaDestroyBuffer(ctx->getAllocatorHandle(), Buffer, vBufferAlloc);
+    vmaDestroyBuffer(ctx->getAllocatorHandle(), Buffer, vmaAlloc);
 }
