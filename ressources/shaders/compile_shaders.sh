@@ -15,6 +15,6 @@ echo "Compiling shaders..."
 glslc "$SHADER_DIR/shader.vert" -o "$OUT_DIR/shader.vert.spv"
 
 # Fragment Shader
-glslc "$SHADER_DIR/shader.frag" -o "$OUT_DIR/shader.frag.spv"
+glslc --target-env=vulkan1.2 "$SHADER_DIR/shader.frag" -o "$OUT_DIR/shader.frag.spv"
 
 echo "Done."

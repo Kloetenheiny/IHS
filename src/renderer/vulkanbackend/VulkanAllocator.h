@@ -20,10 +20,26 @@ private:
 
 public:
     //objects
+    struct ShaderData
+    {
+        glm::mat4 projection;
+        glm::mat4 view;
+        glm::mat4 model;
+    }shaderData{};
+
+    struct ShaderDataBuffer
+    {
+        VmaAllocation allocation{ VK_NULL_HANDLE };
+        VmaAllocationInfo allocationInfo{};
+        VkBuffer buffer{ VK_NULL_HANDLE };
+        VkDeviceAddress deviceAddress{};
+    };
     std::array<VkFence, s_MAX_FRAMES_IN_FLIGHT> m_fences;
     std::array<VkSemaphore, s_MAX_FRAMES_IN_FLIGHT> m_presentSemaphores;
     std::array<VkCommandBuffer, s_MAX_FRAMES_IN_FLIGHT> m_cmdBuffers;
     std::vector<VkSemaphore> m_renderSemaphores;
+    std::array<ShaderDataBuffer, s_MAX_FRAMES_IN_FLIGHT> m_shaderDataBuffers;
+
 private:
     //functions
     void createCommandPool();
@@ -39,4 +55,5 @@ public:
     VkShaderModule createShaderModule(const std::vector<char>& code);
     void allocateBuffer(VkBuffer& Buffer, VmaAllocation& vmaAlloc);
     void freeBufferMemory(VkBuffer& Buffer, VmaAllocation& vmaAlloc);
+    void allocShaderDataBuffer();
 };

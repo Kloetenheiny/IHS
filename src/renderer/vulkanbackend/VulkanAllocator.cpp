@@ -167,3 +167,35 @@ void VulkanAllocator::freeBufferMemory(VkBuffer& Buffer, VmaAllocation& vmaAlloc
 {
     vmaDestroyBuffer(ctx->getAllocatorHandle(), Buffer, vmaAlloc);
 }
+
+void VulkanAllocator::allocShaderDataBuffer()
+{
+    for (size_t i {}; i < s_MAX_FRAMES_IN_FLIGHT; i++)
+    {
+        VkBufferCreateInfo bufferCI
+        {
+            .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+            .size = sizeof(ShaderData),
+            .usage = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT
+        };
+
+        VmaAllocationCreateInfo vmaAllocCI
+        {
+            .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_ALLOW_TRANSFER_INSTEAD_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT,
+            .usage = VMA_MEMORY_USAGE_AUTO,
+        };
+
+        if (vmaCreateBuffer(ctx->getAllocatorHandle(), &bufferCI, &vmaAllocCI, &m_shaderDataBuffers[i].buffer, &m_shaderDataBuffers[i].allocation, &m_shaderDataBuffers[i].allocationInfo) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to alloc shader data buffer");
+        }
+
+        VkBufferDeviceAddressInfo deviceAdressInfo
+        {
+            .sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO,
+            .buffer = m_shaderDataBuffers[i].buffer,
+        };
+
+        m_shaderDataBuffers[i].deviceAddress = vkGetBufferDeviceAddress(ctx->getDeviceHandle(), &deviceAdressInfo);
+    }
+}

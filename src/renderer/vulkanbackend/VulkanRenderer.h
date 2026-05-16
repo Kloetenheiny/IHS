@@ -4,6 +4,7 @@
 #include <renderer/vulkanbackend/VulkanSwapchain.h>
 #include <renderer/vulkanbackend/VulkanAllocator.h>
 #include <renderer/vulkanbackend/VulkanPipeline.h>
+#include <chrono>
 
 class VulkanRenderer
 {

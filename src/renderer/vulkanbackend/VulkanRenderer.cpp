@@ -13,6 +13,7 @@ VulkanRenderer::~VulkanRenderer()
 void VulkanRenderer::draw()
 {
     Allocator.allocateBuffer(vBuffer, vmaAlloc);
+    Allocator.allocShaderDataBuffer();
 
     while (!glfwWindowShouldClose(window.getWindowHandle()))
     {
@@ -93,8 +94,25 @@ void VulkanRenderer::draw()
         vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, GraphicsPipeline.getGraphicsPipelineHandle());
 
 
-
         //vkCmdPushConstants(cb, GraphicsPipeline.getGraphicsPipelineLayoutHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(VulkanContext::Vertex) * 3, Context.vertices.data());
+        vkCmdPushConstants(cb, GraphicsPipeline.getGraphicsPipelineLayoutHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(VkDeviceAddress), &Allocator.m_shaderDataBuffers[frameIndex].deviceAddress);
+
+        static auto startTime = std::chrono::high_resolution_clock::now();
+
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+
+
+        Allocator.shaderData.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        Allocator.shaderData.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        Allocator.shaderData.projection = glm::perspective(glm::radians(45.0f), Swapchain.m_swapchainExtent.width / (float)Swapchain.m_swapchainExtent.height, 0.1f, 10.0f);
+
+        Allocator.shaderData.projection[1][1] *= -1;
+
+        memcpy(Allocator.m_shaderDataBuffers[frameIndex].allocationInfo.pMappedData, &Allocator.shaderData, sizeof(Allocator.shaderData));
+
+
         VkDeviceSize vOffset{};
         vkCmdBindVertexBuffers(cb, 0, 1, &vBuffer, &vOffset);
 
@@ -160,4 +178,8 @@ void VulkanRenderer::draw()
     }
 
     Allocator.freeBufferMemory(vBuffer, vmaAlloc);
+    for (size_t i{}; i < s_MAX_FRAMES_IN_FLIGHT; i++)
+    {
+        Allocator.freeBufferMemory(Allocator.m_shaderDataBuffers[i].buffer, Allocator.m_shaderDataBuffers[i].allocation);
+    }
 }
