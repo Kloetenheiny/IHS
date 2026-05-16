@@ -12,8 +12,38 @@ VulkanRenderer::~VulkanRenderer()
 
 void VulkanRenderer::draw()
 {
-    Allocator.allocateBuffer(vBuffer, vmaAlloc);
-    Allocator.allocShaderDataBuffer();
+    //Allocator.allocShaderDataBuffer();
+
+    auto vertexBuffer = Allocator.allocBuffer(sizeof(VulkanContext::Vertex) * Context.vertices.size(),
+        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+        VMA_MEMORY_USAGE_AUTO,
+        VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT
+                    | VMA_ALLOCATION_CREATE_HOST_ACCESS_ALLOW_TRANSFER_INSTEAD_BIT
+                    | VMA_ALLOCATION_CREATE_MAPPED_BIT,
+                    Context.vertices.data());
+
+
+    auto indexBuffer = Allocator.allocBuffer(sizeof(uint16_t) * Context.indices.size(),
+    VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+    VMA_MEMORY_USAGE_AUTO,
+    VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT
+                | VMA_ALLOCATION_CREATE_HOST_ACCESS_ALLOW_TRANSFER_INSTEAD_BIT
+                | VMA_ALLOCATION_CREATE_MAPPED_BIT,
+                Context.indices.data());
+
+    std::array<VulkanAllocator::BufferAllocation, s_MAX_FRAMES_IN_FLIGHT> shaderDataBuffers;
+
+    for (size_t i{}; i < s_MAX_FRAMES_IN_FLIGHT; i++)
+    {
+        shaderDataBuffers[i] = Allocator.allocBuffer(
+            sizeof(Allocator.shaderData),
+            VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+            VMA_MEMORY_USAGE_AUTO,
+            VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT
+            | VMA_ALLOCATION_CREATE_HOST_ACCESS_ALLOW_TRANSFER_INSTEAD_BIT
+            | VMA_ALLOCATION_CREATE_MAPPED_BIT
+        );
+    }
 
     while (!glfwWindowShouldClose(window.getWindowHandle()))
     {
@@ -95,13 +125,12 @@ void VulkanRenderer::draw()
 
 
         //vkCmdPushConstants(cb, GraphicsPipeline.getGraphicsPipelineLayoutHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(VulkanContext::Vertex) * 3, Context.vertices.data());
-        vkCmdPushConstants(cb, GraphicsPipeline.getGraphicsPipelineLayoutHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(VkDeviceAddress), &Allocator.m_shaderDataBuffers[frameIndex].deviceAddress);
+        vkCmdPushConstants(cb, GraphicsPipeline.getGraphicsPipelineLayoutHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(VkDeviceAddress), &shaderDataBuffers[frameIndex].deviceAdress);
 
         static auto startTime = std::chrono::high_resolution_clock::now();
 
         auto currentTime = std::chrono::high_resolution_clock::now();
         float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
 
 
         Allocator.shaderData.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -110,13 +139,15 @@ void VulkanRenderer::draw()
 
         Allocator.shaderData.projection[1][1] *= -1;
 
-        memcpy(Allocator.m_shaderDataBuffers[frameIndex].allocationInfo.pMappedData, &Allocator.shaderData, sizeof(Allocator.shaderData));
+        memcpy(shaderDataBuffers[frameIndex].allocationInfo.pMappedData, &Allocator.shaderData, sizeof(Allocator.shaderData));
 
 
         VkDeviceSize vOffset{};
-        vkCmdBindVertexBuffers(cb, 0, 1, &vBuffer, &vOffset);
+        vkCmdBindVertexBuffers(cb, 0, 1, &vertexBuffer.Buffer, &vOffset);
+        vkCmdBindIndexBuffer(cb, indexBuffer.Buffer, 0, VK_INDEX_TYPE_UINT16);
 
-        vkCmdDraw(cb, 3, 1, 0, 0);
+        //vkCmdDraw(cb, 6, 1, 0, 0);
+        vkCmdDrawIndexed(cb, Context.indices.size(), 1, 0, 0, 0);
 
         vkCmdEndRendering(cb);
 
@@ -177,9 +208,10 @@ void VulkanRenderer::draw()
         glfwPollEvents();
     }
 
-    Allocator.freeBufferMemory(vBuffer, vmaAlloc);
+    Allocator.freeBufferMemory(vertexBuffer);
+    Allocator.freeBufferMemory(indexBuffer);
     for (size_t i{}; i < s_MAX_FRAMES_IN_FLIGHT; i++)
     {
-        Allocator.freeBufferMemory(Allocator.m_shaderDataBuffers[i].buffer, Allocator.m_shaderDataBuffers[i].allocation);
+        Allocator.freeBufferMemory(shaderDataBuffers[i]);
     }
 }

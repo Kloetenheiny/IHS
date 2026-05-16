@@ -18,7 +18,9 @@ private:
     uint32_t frameIndex{0};
     uint32_t imageIndex{0};
     VmaAllocation vmaAlloc{};
+    VmaAllocation iBuffvmaAlloc{};
     VkBuffer vBuffer = VK_NULL_HANDLE;
+    VkBuffer iBuffer = VK_NULL_HANDLE;
 public:
     //objects
 private:

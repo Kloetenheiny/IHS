@@ -10,5 +10,7 @@ int main()
 
     Renderer.draw();
 
+    std::cerr << sizeof(Renderer) << std::endl;
+
     return 0;
 }

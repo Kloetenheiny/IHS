@@ -16,7 +16,6 @@ private:
     VkCommandPool m_cmdPool = VK_NULL_HANDLE;
     VulkanSwapchain* swapchain;
     VulkanContext* ctx;
-    VmaAllocation vBufferAlloc = VK_NULL_HANDLE;
 
 public:
     //objects
@@ -34,6 +33,15 @@ public:
         VkBuffer buffer{ VK_NULL_HANDLE };
         VkDeviceAddress deviceAddress{};
     };
+
+    struct BufferAllocation
+    {
+        VkBuffer Buffer = VK_NULL_HANDLE;
+        VmaAllocation vmaAlloc = VK_NULL_HANDLE;
+        VmaAllocationInfo allocationInfo{};
+        VkDeviceAddress deviceAdress{};
+    };
+
     std::array<VkFence, s_MAX_FRAMES_IN_FLIGHT> m_fences;
     std::array<VkSemaphore, s_MAX_FRAMES_IN_FLIGHT> m_presentSemaphores;
     std::array<VkCommandBuffer, s_MAX_FRAMES_IN_FLIGHT> m_cmdBuffers;
@@ -53,7 +61,7 @@ public:
     ~VulkanAllocator();
     std::vector<char> readFile(const std::string& filename);
     VkShaderModule createShaderModule(const std::vector<char>& code);
-    void allocateBuffer(VkBuffer& Buffer, VmaAllocation& vmaAlloc);
-    void freeBufferMemory(VkBuffer& Buffer, VmaAllocation& vmaAlloc);
+    BufferAllocation allocBuffer(VkDeviceSize size, VkBufferUsageFlags usageflags, VmaMemoryUsage memoryusage, VmaAllocationCreateFlags vmaallocflags, const void* = nullptr);
+    void freeBufferMemory(BufferAllocation& allocatedBuffer);
     void allocShaderDataBuffer();
 };

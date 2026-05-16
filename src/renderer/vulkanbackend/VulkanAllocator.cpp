@@ -136,36 +136,62 @@ VkShaderModule VulkanAllocator::createShaderModule(const std::vector<char>& code
 
 }
 
-void VulkanAllocator::allocateBuffer(VkBuffer& Buffer, VmaAllocation& vmaAlloc)
+VulkanAllocator::BufferAllocation VulkanAllocator::allocBuffer(VkDeviceSize size, VkBufferUsageFlags usageflags, VmaMemoryUsage memoryusage, VmaAllocationCreateFlags vmaallocflags, const void* data)
 {
-    VkDeviceSize vBuffSize{sizeof(VulkanContext::Vertex) * ctx->vertices.size()};
+    BufferAllocation result{};
+
     VkBufferCreateInfo bufferCI
     {
         .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-        .size = vBuffSize,
-        .usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+        .size = size,
+        .usage = usageflags
     };
+
     VmaAllocationCreateInfo vmaAllocCI
     {
-        .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_ALLOW_TRANSFER_INSTEAD_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT,
-        .usage = VMA_MEMORY_USAGE_AUTO,
-    };
-    VmaAllocationInfo vBufferAllocInfo
-    {
-
+        .flags = vmaallocflags,
+        .usage = memoryusage
     };
 
-    if (vmaCreateBuffer(ctx->getAllocatorHandle(), &bufferCI, &vmaAllocCI, &Buffer, &vmaAlloc, &vBufferAllocInfo) != VK_SUCCESS)
+    if (vmaCreateBuffer(ctx->getAllocatorHandle(), &bufferCI, &vmaAllocCI, &result.Buffer, &result.vmaAlloc, &result.allocationInfo) != VK_SUCCESS)
     {
-        throw std::runtime_error("Failed to alloc vBuffer");
+        throw std::runtime_error("Failed to alloc buffer");
     }
 
-    memcpy(vBufferAllocInfo.pMappedData, ctx->vertices.data(), vBuffSize);
+    if (data != nullptr)
+    {
+        if (result.allocationInfo.pMappedData)
+        {
+            memcpy(result.allocationInfo.pMappedData, data, size);
+        }
+        else
+        {
+            void* mapped = nullptr;
+            vmaMapMemory(ctx->getAllocatorHandle(), result.vmaAlloc, &mapped);
+            memcpy(mapped, data, size);
+            vmaUnmapMemory(ctx->getAllocatorHandle(), result.vmaAlloc);
+        }
+    }
+
+    if (usageflags & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+    {
+        VkBufferDeviceAddressInfo deviceAdressCI
+        {
+            .sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO,
+            .buffer = result.Buffer
+        };
+
+        result.deviceAdress = vkGetBufferDeviceAddress(ctx->getDeviceHandle(), &deviceAdressCI);
+    }
+
+    return result;
 }
 
-void VulkanAllocator::freeBufferMemory(VkBuffer& Buffer, VmaAllocation& vmaAlloc)
+void VulkanAllocator::freeBufferMemory(BufferAllocation& allocatedBuffer)
 {
-    vmaDestroyBuffer(ctx->getAllocatorHandle(), Buffer, vmaAlloc);
+    vmaDestroyBuffer(ctx->getAllocatorHandle(), allocatedBuffer.Buffer, allocatedBuffer.vmaAlloc);
+    allocatedBuffer.Buffer = VK_NULL_HANDLE;
+    allocatedBuffer.vmaAlloc = VK_NULL_HANDLE;
 }
 
 void VulkanAllocator::allocShaderDataBuffer()

@@ -44,17 +44,17 @@ public:
     // Einfaches Dreieck
     const std::vector<Vertex> vertices =
     {
-        {{ 0.0f, -0.5f }, {1.0f, 0.0f, 0.0f}},  // Spitze oben - Rot
-        {{ 0.5f,  0.5f }, {0.0f, 1.0f, 0.0f}},  // rechts unten - Grün
-        {{-0.5f,  0.5f }, {0.0f, 0.0f, 1.0f}}   // links unten - Blau
+        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},  // oben links  - Rot
+        {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},  // oben rechts - Grün
+        {{ 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},  // unten rechts - Blau
+        {{-0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}}   // unten links  - Gelb
     };
 
-    struct PushConstants
+    const std::vector<uint16_t> indices =
     {
-        glm::vec2 pos[3];   // 3 × 8 Bytes  = 24 Bytes  (+ 8 Padding = 32)
-        glm::vec3 color[3]; // 3 × 16 Bytes = 48 Bytes
-    };                      // gesamt:        80 Bytes
-
+        0, 1, 2,  // erstes Dreieck  (oben links → oben rechts → unten rechts)
+        2, 3, 0   // zweites Dreieck (unten rechts → unten links → oben links)
+    };
 
 private:
     //functions
