@@ -6,6 +6,7 @@
 #include <vector>
 #include <fstream>
 #include <cstring>
+#include <stb_image/stb_image.h>
 
 static constexpr int s_MAX_FRAMES_IN_FLIGHT{2};
 
@@ -21,17 +22,27 @@ public:
     //objects
     struct ShaderData
     {
-        glm::mat4 projection;
-        glm::mat4 view;
-        glm::mat4 model;
+        glm::mat4 m_projection;
+        glm::mat4 m_view;
+        glm::mat4 m_model;
     }shaderData{};
 
     struct BufferAllocation
     {
-        VkBuffer Buffer = VK_NULL_HANDLE;
-        VmaAllocation vmaAlloc = VK_NULL_HANDLE;
-        VmaAllocationInfo allocationInfo{};
-        VkDeviceAddress deviceAdress{};
+        VkBuffer m_Buffer = VK_NULL_HANDLE;
+        VmaAllocation m_vmaAlloc = VK_NULL_HANDLE;
+        VmaAllocationInfo m_allocationInfo{};
+        VkDeviceAddress m_deviceAdress{};
+    };
+
+    struct Image
+    {
+        VkImage m_TexImage = VK_NULL_HANDLE;
+        VkImageView m_TexImageView = VK_NULL_HANDLE;
+        VkDeviceSize m_TexImageSize{};
+        VkDeviceMemory m_TexImageDeviceMemory{};
+        VmaAllocation m_TexImageVMAAlloc = VK_NULL_HANDLE;
+        VkSampler m_TexImageSampler = VK_NULL_HANDLE;
     };
 
     std::array<VkFence, s_MAX_FRAMES_IN_FLIGHT> m_fences;
@@ -45,6 +56,8 @@ private:
     void createCommandPool();
     void allocateCommandBuffer();
     void createSyncObjects();
+    Image loadImageFromFile(char const* filename);
+    Image createImage();
 
 
 public:

@@ -153,23 +153,23 @@ VulkanAllocator::BufferAllocation VulkanAllocator::allocBuffer(VkDeviceSize size
         .usage = memoryusage
     };
 
-    if (vmaCreateBuffer(ctx->getAllocatorHandle(), &bufferCI, &vmaAllocCI, &result.Buffer, &result.vmaAlloc, &result.allocationInfo) != VK_SUCCESS)
+    if (vmaCreateBuffer(ctx->getAllocatorHandle(), &bufferCI, &vmaAllocCI, &result.m_Buffer, &result.m_vmaAlloc, &result.m_allocationInfo) != VK_SUCCESS)
     {
         throw std::runtime_error("Failed to alloc buffer");
     }
 
     if (data != nullptr)
     {
-        if (result.allocationInfo.pMappedData)
+        if (result.m_allocationInfo.pMappedData)
         {
-            memcpy(result.allocationInfo.pMappedData, data, size);
+            memcpy(result.m_allocationInfo.pMappedData, data, size);
         }
         else
         {
             void* mapped = nullptr;
-            vmaMapMemory(ctx->getAllocatorHandle(), result.vmaAlloc, &mapped);
+            vmaMapMemory(ctx->getAllocatorHandle(), result.m_vmaAlloc, &mapped);
             memcpy(mapped, data, size);
-            vmaUnmapMemory(ctx->getAllocatorHandle(), result.vmaAlloc);
+            vmaUnmapMemory(ctx->getAllocatorHandle(), result.m_vmaAlloc);
         }
     }
 
@@ -178,10 +178,10 @@ VulkanAllocator::BufferAllocation VulkanAllocator::allocBuffer(VkDeviceSize size
         VkBufferDeviceAddressInfo deviceAdressCI
         {
             .sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO,
-            .buffer = result.Buffer
+            .buffer = result.m_Buffer
         };
 
-        result.deviceAdress = vkGetBufferDeviceAddress(ctx->getDeviceHandle(), &deviceAdressCI);
+        result.m_deviceAdress = vkGetBufferDeviceAddress(ctx->getDeviceHandle(), &deviceAdressCI);
     }
 
     return result;
@@ -189,7 +189,68 @@ VulkanAllocator::BufferAllocation VulkanAllocator::allocBuffer(VkDeviceSize size
 
 void VulkanAllocator::freeBufferMemory(BufferAllocation& allocatedBuffer)
 {
-    vmaDestroyBuffer(ctx->getAllocatorHandle(), allocatedBuffer.Buffer, allocatedBuffer.vmaAlloc);
-    allocatedBuffer.Buffer = VK_NULL_HANDLE;
-    allocatedBuffer.vmaAlloc = VK_NULL_HANDLE;
+    vmaDestroyBuffer(ctx->getAllocatorHandle(), allocatedBuffer.m_Buffer, allocatedBuffer.m_vmaAlloc);
+    allocatedBuffer.m_Buffer = VK_NULL_HANDLE;
+    allocatedBuffer.m_vmaAlloc = VK_NULL_HANDLE;
+}
+
+VulkanAllocator::Image VulkanAllocator::loadImageFromFile(char const* filename)
+{
+    Image ImageResult{};
+
+    int x{};
+    int y{};
+    int channels{};
+
+    unsigned char* data = stbi_load(filename, &x, &y, &channels, STBI_rgb_alpha);
+
+    if (!data)
+    {
+        throw std::runtime_error("Failed to load image");
+    }
+
+    VkImageCreateInfo imageCI
+    {
+        .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+        .imageType = VK_IMAGE_TYPE_2D,
+        .format = VK_FORMAT_B8G8R8A8_SRGB,
+        .extent = {.width = static_cast<uint32_t>(x), .height = static_cast<uint32_t>(y), .depth = 1},
+        .mipLevels = 1,
+        .arrayLayers = 1,
+        .tiling = VK_IMAGE_TILING_OPTIMAL,
+        .usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
+
+    };
+
+    VmaAllocationCreateInfo texAllocCI
+    {
+        .usage = VMA_MEMORY_USAGE_AUTO,
+    };
+
+    if (vmaCreateImage(ctx->getAllocatorHandle(), &imageCI, &texAllocCI, &ImageResult.m_TexImage, &ImageResult.m_TexImageVMAAlloc, nullptr) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create Texture Image");
+    }
+
+    VkImageViewCreateInfo imageViewCI
+    {
+        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+        .image = ImageResult.m_TexImage,
+        .viewType = VK_IMAGE_VIEW_TYPE_2D,
+        .format = imageCI.format,
+        .subresourceRange = {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .levelCount = 1, .layerCount = 1 }, //level count??
+    };
+
+    if (vkCreateImageView(ctx->getDeviceHandle(), &imageViewCI, nullptr, &ImageResult.m_TexImageView) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create image views");
+    }
+
+}
+
+VulkanAllocator::Image VulkanAllocator::createImage()
+{
+
 }
