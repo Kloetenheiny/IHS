@@ -17,6 +17,9 @@ private:
     VkCommandPool m_cmdPool = VK_NULL_HANDLE;
     VulkanSwapchain* swapchain;
     VulkanContext* ctx;
+    VkDescriptorSetLayout m_descriptorSetLayoutTex = VK_NULL_HANDLE;
+    VkDescriptorPool m_descriptorPool = VK_NULL_HANDLE;
+    VkDescriptorSet m_descriptorSetTex = VK_NULL_HANDLE;
 
 public:
     //objects
@@ -33,6 +36,7 @@ public:
         VmaAllocation m_vmaAlloc = VK_NULL_HANDLE;
         VmaAllocationInfo m_allocationInfo{};
         VkDeviceAddress m_deviceAdress{};
+        VkDeviceSize m_TexImageSize{};
     };
 
     struct Image
@@ -40,7 +44,6 @@ public:
         VkImage m_TexImage = VK_NULL_HANDLE;
         VkImageView m_TexImageView = VK_NULL_HANDLE;
         VkDeviceSize m_TexImageSize{};
-        VkDeviceMemory m_TexImageDeviceMemory{};
         VmaAllocation m_TexImageVMAAlloc = VK_NULL_HANDLE;
         VkSampler m_TexImageSampler = VK_NULL_HANDLE;
     };
@@ -56,8 +59,7 @@ private:
     void createCommandPool();
     void allocateCommandBuffer();
     void createSyncObjects();
-    Image loadImageFromFile(char const* filename);
-    Image createImage();
+
 
 
 public:
@@ -68,5 +70,7 @@ public:
     VkShaderModule createShaderModule(const std::vector<char>& code);
     BufferAllocation allocBuffer(VkDeviceSize size, VkBufferUsageFlags usageflags, VmaMemoryUsage memoryusage, VmaAllocationCreateFlags vmaallocflags, const void* = nullptr);
     void freeBufferMemory(BufferAllocation& allocatedBuffer);
+    void createDescriptorSet(Image& image);
+    Image loadImageFromFile(char const* filename);
 
 };

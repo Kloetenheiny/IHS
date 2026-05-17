@@ -44,6 +44,8 @@ void VulkanRenderer::draw()
         );
     }
 
+    auto Texture = Allocator.loadImageFromFile("/home/christian/CLionProjects/IHS/ressources/textures/default_dirt.png");
+
     while (!glfwWindowShouldClose(window.getWindowHandle()))
     {
         vkWaitForFences(Context.getDeviceHandle(), 1, &Allocator.m_fences[frameIndex], true, UINT64_MAX);
