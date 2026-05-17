@@ -12,7 +12,6 @@ VulkanRenderer::~VulkanRenderer()
 
 void VulkanRenderer::draw()
 {
-    //Allocator.allocShaderDataBuffer();
 
     auto vertexBuffer = Allocator.allocBuffer(sizeof(VulkanContext::Vertex) * Context.vertices.size(),
         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
@@ -112,8 +111,10 @@ void VulkanRenderer::draw()
 
         VkViewport vp
         {
-            .width = static_cast<float>(Swapchain.m_swapchainExtent.width),
-            .height = static_cast<float>(Swapchain.m_swapchainExtent.height),
+            .x = 0.0f,
+            .y = static_cast<float>(Swapchain.m_swapchainExtent.height),  // Start unten
+            .width  =  static_cast<float>(Swapchain.m_swapchainExtent.width),
+            .height = -static_cast<float>(Swapchain.m_swapchainExtent.height),  // negativ!
             .minDepth = 0.0f,
             .maxDepth = 1.0f
         };
@@ -133,11 +134,10 @@ void VulkanRenderer::draw()
         float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 
-        Allocator.shaderData.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        Allocator.shaderData.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         Allocator.shaderData.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         Allocator.shaderData.projection = glm::perspective(glm::radians(45.0f), Swapchain.m_swapchainExtent.width / (float)Swapchain.m_swapchainExtent.height, 0.1f, 10.0f);
 
-        Allocator.shaderData.projection[1][1] *= -1;
 
         memcpy(shaderDataBuffers[frameIndex].allocationInfo.pMappedData, &Allocator.shaderData, sizeof(Allocator.shaderData));
 

@@ -26,7 +26,8 @@ add_executable(IHS src/application/main.cpp
         src/renderer/vulkanbackend/VulkanRenderer.cpp
         src/renderer/vulkanbackend/VulkanRenderer.h
         src/renderer/vulkanbackend/VulkanPipeline.h
-        src/renderer/vulkanbackend/VulkanPipeline.cpp)
+        src/renderer/vulkanbackend/VulkanPipeline.cpp
+        src/application/stb_image_impl/stb_image.cpp)
 
 target_include_directories(IHS PRIVATE
     src/

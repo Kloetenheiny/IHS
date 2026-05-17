@@ -26,14 +26,6 @@ public:
         glm::mat4 model;
     }shaderData{};
 
-    struct ShaderDataBuffer
-    {
-        VmaAllocation allocation{ VK_NULL_HANDLE };
-        VmaAllocationInfo allocationInfo{};
-        VkBuffer buffer{ VK_NULL_HANDLE };
-        VkDeviceAddress deviceAddress{};
-    };
-
     struct BufferAllocation
     {
         VkBuffer Buffer = VK_NULL_HANDLE;
@@ -46,7 +38,7 @@ public:
     std::array<VkSemaphore, s_MAX_FRAMES_IN_FLIGHT> m_presentSemaphores;
     std::array<VkCommandBuffer, s_MAX_FRAMES_IN_FLIGHT> m_cmdBuffers;
     std::vector<VkSemaphore> m_renderSemaphores;
-    std::array<ShaderDataBuffer, s_MAX_FRAMES_IN_FLIGHT> m_shaderDataBuffers;
+
 
 private:
     //functions
@@ -63,5 +55,5 @@ public:
     VkShaderModule createShaderModule(const std::vector<char>& code);
     BufferAllocation allocBuffer(VkDeviceSize size, VkBufferUsageFlags usageflags, VmaMemoryUsage memoryusage, VmaAllocationCreateFlags vmaallocflags, const void* = nullptr);
     void freeBufferMemory(BufferAllocation& allocatedBuffer);
-    void allocShaderDataBuffer();
+
 };
