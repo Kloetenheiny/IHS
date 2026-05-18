@@ -27,6 +27,8 @@ VulkanAllocator::~VulkanAllocator()
     }
 
     vkDestroyCommandPool(ctx->getDeviceHandle(), m_cmdPool, nullptr);
+
+    cleanupDescriptors();
 }
 
 void VulkanAllocator::createCommandPool()
@@ -194,9 +196,9 @@ void VulkanAllocator::freeBufferMemory(BufferAllocation& allocatedBuffer)
     allocatedBuffer.m_vmaAlloc = VK_NULL_HANDLE;
 }
 
-VulkanAllocator::Image VulkanAllocator::loadImageFromFile(char const* filename)
+VulkanAllocator::Texture VulkanAllocator::loadImageFromFile(char const* filename)
 {
-    Image ImageResult{};
+    Texture ImageResult{};
 
     int x{};
     int y{};
@@ -355,6 +357,11 @@ VulkanAllocator::Image VulkanAllocator::loadImageFromFile(char const* filename)
     vkQueueSubmit(ctx->getGraphicsQueueHandle(), 1, &oneTimeSI, fenceOneTime);
     vkWaitForFences(ctx->getDeviceHandle(), 1, &fenceOneTime, VK_TRUE, UINT64_MAX);
 
+    freeBufferMemory(imgSrcBuffer);
+    vkFreeCommandBuffers(ctx->getDeviceHandle(), m_cmdPool, 1, &cbOneTime);
+    vkDestroyFence(ctx->getDeviceHandle(), fenceOneTime, nullptr);
+    stbi_image_free(data);
+
     VkSamplerCreateInfo samplerCI
     {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
@@ -376,7 +383,7 @@ VulkanAllocator::Image VulkanAllocator::loadImageFromFile(char const* filename)
     return ImageResult;
 }
 
-void VulkanAllocator::createDescriptorSet(Image& image)
+void VulkanAllocator::createDescriptorSet(Texture& image)
 {
     VkDescriptorBindingFlags descVariableFlag{ VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT };
     //is used to enable a variable number of descriptors in that binding as part of descriptor indexing and is passed via pNext
@@ -458,4 +465,46 @@ void VulkanAllocator::createDescriptorSet(Image& image)
         .pImageInfo = &textureDescriptors
     };
     vkUpdateDescriptorSets(ctx->getDeviceHandle(), 1, &writeDescSet, 0, nullptr);
+}
+
+void VulkanAllocator::cleanupImage(Texture& image)
+{
+    if (image.m_TexImageSampler != VK_NULL_HANDLE)
+    {
+        vkDestroySampler(ctx->getDeviceHandle(), image.m_TexImageSampler, nullptr);
+        image.m_TexImageSampler = VK_NULL_HANDLE;
+    }
+
+    if (image.m_TexImageView != VK_NULL_HANDLE)
+    {
+        vkDestroyImageView(ctx->getDeviceHandle(), image.m_TexImageView, nullptr);
+        image.m_TexImageView = VK_NULL_HANDLE;
+    }
+
+    if (image.m_TexImage != VK_NULL_HANDLE && image.m_TexImageVMAAlloc != VK_NULL_HANDLE)
+    {
+        vmaDestroyImage(ctx->getAllocatorHandle(), image.m_TexImage, image.m_TexImageVMAAlloc);
+        image.m_TexImage = VK_NULL_HANDLE;
+        image.m_TexImageVMAAlloc = VK_NULL_HANDLE;
+    }
+
+}
+
+void VulkanAllocator::cleanupDescriptors()
+{
+
+    //only call on shutdown
+    if (m_descriptorPool != VK_NULL_HANDLE)
+    {
+        // Descriptor Sets werden automatisch mit dem Pool zerstört
+        vkDestroyDescriptorPool(ctx->getDeviceHandle(), m_descriptorPool, nullptr);
+        m_descriptorPool = VK_NULL_HANDLE;
+        m_descriptorSetTex = VK_NULL_HANDLE;
+    }
+
+    if (m_descriptorSetLayoutTex != VK_NULL_HANDLE)
+    {
+        vkDestroyDescriptorSetLayout(ctx->getDeviceHandle(), m_descriptorSetLayoutTex, nullptr);
+        m_descriptorSetLayoutTex = VK_NULL_HANDLE;
+    }
 }

@@ -216,4 +216,7 @@ void VulkanRenderer::draw()
     {
         Allocator.freeBufferMemory(shaderDataBuffers[i]);
     }
+
+    Allocator.cleanupImage(Texture);
 }
+

@@ -39,13 +39,14 @@ public:
         VkDeviceSize m_TexImageSize{};
     };
 
-    struct Image
+    struct Texture
     {
         VkImage m_TexImage = VK_NULL_HANDLE;
         VkImageView m_TexImageView = VK_NULL_HANDLE;
         VkDeviceSize m_TexImageSize{};
         VmaAllocation m_TexImageVMAAlloc = VK_NULL_HANDLE;
         VkSampler m_TexImageSampler = VK_NULL_HANDLE;
+
     };
 
     std::array<VkFence, s_MAX_FRAMES_IN_FLIGHT> m_fences;
@@ -59,7 +60,8 @@ private:
     void createCommandPool();
     void allocateCommandBuffer();
     void createSyncObjects();
-
+    void cleanupDescriptors();
+    void createDescriptorSet(Texture& image);
 
 
 public:
@@ -70,7 +72,8 @@ public:
     VkShaderModule createShaderModule(const std::vector<char>& code);
     BufferAllocation allocBuffer(VkDeviceSize size, VkBufferUsageFlags usageflags, VmaMemoryUsage memoryusage, VmaAllocationCreateFlags vmaallocflags, const void* = nullptr);
     void freeBufferMemory(BufferAllocation& allocatedBuffer);
-    void createDescriptorSet(Image& image);
-    Image loadImageFromFile(char const* filename);
+    Texture loadImageFromFile(char const* filename);
+    void cleanupImage(Texture& image);
+
 
 };
