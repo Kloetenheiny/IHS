@@ -34,20 +34,19 @@ public:
     VmaAllocator getAllocatorHandle() const {return m_allocator_instance;}
 
     //objects
-    // Position + Farbe pro Vertex
     struct Vertex
     {
         glm::vec2 pos;
         glm::vec3 color;
+        glm::vec2 texCoord;
     };
 
-    // Einfaches Dreieck
     const std::vector<Vertex> vertices =
     {
-        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},  // oben links  - Rot
-        {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},  // oben rechts - Grün
-        {{ 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},  // unten rechts - Blau
-        {{-0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}}   // unten links  - Gelb
+        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},  // oben links   - Rot
+        {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},  // oben rechts  - Grün
+        {{ 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},  // unten rechts - Blau
+        {{-0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}}   // unten links  - Gelb
     };
 
     const std::vector<uint16_t> indices =

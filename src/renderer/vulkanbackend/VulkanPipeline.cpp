@@ -30,7 +30,8 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
     VkPipelineLayoutCreateInfo pipelineLayoutCI
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .setLayoutCount = 0,
+        .setLayoutCount = 1,
+        .pSetLayouts = &vlknAlloc->m_descriptorSetLayoutTex,
         .pushConstantRangeCount = 1,
         .pPushConstantRanges = &pushConstantRange,
     };
@@ -47,7 +48,7 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
         .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
     };
 
-    std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+    std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
     // Position
     attributeDescriptions[0].binding = 0;
@@ -61,12 +62,18 @@ void VulkanGraphicsPipeline::createGraphicsPipeline()
     attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
     attributeDescriptions[1].offset = offsetof(VulkanContext::Vertex, color);
 
+    //texCoords
+    attributeDescriptions[2].binding = 0;
+    attributeDescriptions[2].location = 2;
+    attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+    attributeDescriptions[2].offset = offsetof(VulkanContext::Vertex, texCoord);
+
     VkPipelineVertexInputStateCreateInfo vertexInputState
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .vertexBindingDescriptionCount = 1,
         .pVertexBindingDescriptions = &bindingDescription,
-        .vertexAttributeDescriptionCount = 2,
+        .vertexAttributeDescriptionCount = attributeDescriptions.size(),
         .pVertexAttributeDescriptions = attributeDescriptions.data(),
 
     };

@@ -17,9 +17,9 @@ private:
     VkCommandPool m_cmdPool = VK_NULL_HANDLE;
     VulkanSwapchain* swapchain;
     VulkanContext* ctx;
-    VkDescriptorSetLayout m_descriptorSetLayoutTex = VK_NULL_HANDLE;
+
     VkDescriptorPool m_descriptorPool = VK_NULL_HANDLE;
-    VkDescriptorSet m_descriptorSetTex = VK_NULL_HANDLE;
+
 
 public:
     //objects
@@ -53,6 +53,8 @@ public:
     std::array<VkSemaphore, s_MAX_FRAMES_IN_FLIGHT> m_presentSemaphores;
     std::array<VkCommandBuffer, s_MAX_FRAMES_IN_FLIGHT> m_cmdBuffers;
     std::vector<VkSemaphore> m_renderSemaphores;
+    VkDescriptorSetLayout m_descriptorSetLayoutTex = VK_NULL_HANDLE;
+    VkDescriptorSet m_descriptorSetTex = VK_NULL_HANDLE;
 
 
 private:

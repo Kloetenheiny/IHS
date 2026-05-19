@@ -7,6 +7,7 @@ VulkanAllocator::VulkanAllocator(VulkanContext* ctx, VulkanSwapchain* swapchain)
     createCommandPool();
     allocateCommandBuffer();
     createSyncObjects();
+    auto Texture = loadImageFromFile("/home/christian/CLionProjects/IHS/ressources/textures/default_dirt.png");
 }
 
 VulkanAllocator::~VulkanAllocator()
@@ -217,7 +218,7 @@ VulkanAllocator::Texture VulkanAllocator::loadImageFromFile(char const* filename
     {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .imageType = VK_IMAGE_TYPE_2D,
-        .format = VK_FORMAT_B8G8R8A8_SRGB,
+        .format = VK_FORMAT_R8G8B8A8_SRGB,
         .extent = {.width = static_cast<uint32_t>(x), .height = static_cast<uint32_t>(y), .depth = 1},
         .mipLevels = 1,
         .arrayLayers = 1,
@@ -365,12 +366,13 @@ VulkanAllocator::Texture VulkanAllocator::loadImageFromFile(char const* filename
     VkSamplerCreateInfo samplerCI
     {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-        .magFilter = VK_FILTER_LINEAR,
-        .minFilter = VK_FILTER_LINEAR,
+        .magFilter = VK_FILTER_NEAREST,
+        .minFilter = VK_FILTER_NEAREST,
         .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
         .anisotropyEnable = VK_TRUE,
         .maxAnisotropy = 8.0f, // 8 is a widely supported value for max anisotropy
-        .maxLod = 1,
+        .minLod = 1,
+        .maxLod = VK_LOD_CLAMP_NONE,
     };
 
     if (vkCreateSampler(ctx->getDeviceHandle(), &samplerCI, nullptr, &ImageResult.m_TexImageSampler) != VK_SUCCESS)
