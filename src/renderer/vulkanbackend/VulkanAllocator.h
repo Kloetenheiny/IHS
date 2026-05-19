@@ -17,7 +17,6 @@ private:
     VkCommandPool m_cmdPool = VK_NULL_HANDLE;
     VulkanSwapchain* swapchain;
     VulkanContext* ctx;
-
     VkDescriptorPool m_descriptorPool = VK_NULL_HANDLE;
 
 
@@ -70,12 +69,14 @@ public:
     //functions
     VulkanAllocator(VulkanContext* ctx, VulkanSwapchain* swapchain);
     ~VulkanAllocator();
+    VkCommandPool getcmdPoolHandle() const {return m_cmdPool;}
     std::vector<char> readFile(const std::string& filename);
     VkShaderModule createShaderModule(const std::vector<char>& code);
     BufferAllocation allocBuffer(VkDeviceSize size, VkBufferUsageFlags usageflags, VmaMemoryUsage memoryusage, VmaAllocationCreateFlags vmaallocflags, const void* = nullptr);
     void freeBufferMemory(BufferAllocation& allocatedBuffer);
     Texture loadImageFromFile(char const* filename);
     void cleanupImage(Texture& image);
+    void createDescriptorSetLayout();
 
 
 };

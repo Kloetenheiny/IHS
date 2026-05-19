@@ -7,7 +7,8 @@ VulkanAllocator::VulkanAllocator(VulkanContext* ctx, VulkanSwapchain* swapchain)
     createCommandPool();
     allocateCommandBuffer();
     createSyncObjects();
-    auto Texture = loadImageFromFile("/home/christian/CLionProjects/IHS/ressources/textures/default_dirt.png");
+    createDescriptorSetLayout();
+
 }
 
 VulkanAllocator::~VulkanAllocator()
@@ -28,7 +29,6 @@ VulkanAllocator::~VulkanAllocator()
     }
 
     vkDestroyCommandPool(ctx->getDeviceHandle(), m_cmdPool, nullptr);
-
     cleanupDescriptors();
 }
 
@@ -385,7 +385,7 @@ VulkanAllocator::Texture VulkanAllocator::loadImageFromFile(char const* filename
     return ImageResult;
 }
 
-void VulkanAllocator::createDescriptorSet(Texture& image)
+void VulkanAllocator::createDescriptorSetLayout()
 {
     VkDescriptorBindingFlags descVariableFlag{ VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT };
     //is used to enable a variable number of descriptors in that binding as part of descriptor indexing and is passed via pNext
@@ -412,6 +412,12 @@ void VulkanAllocator::createDescriptorSet(Texture& image)
     {
         throw std::runtime_error("Failed to create Descriptor Set Layout");
     }
+}
+
+void VulkanAllocator::createDescriptorSet(Texture& image)
+{
+
+
 
     VkDescriptorPoolSize poolSize{
         .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,

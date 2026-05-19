@@ -44,6 +44,7 @@ void VulkanRenderer::draw()
         );
     }
 
+    auto Texture = Allocator.loadImageFromFile("/home/christian/CLionProjects/IHS/ressources/textures/default_dirt.png");
 
 
     while (!glfwWindowShouldClose(window.getWindowHandle()))
@@ -218,6 +219,6 @@ void VulkanRenderer::draw()
         Allocator.freeBufferMemory(shaderDataBuffers[i]);
     }
 
-    //Allocator.cleanupImage(Texture);
+    Allocator.cleanupImage(Texture);
 }
 
